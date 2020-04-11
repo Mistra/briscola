@@ -1,0 +1,1 @@
+from briscola import app
