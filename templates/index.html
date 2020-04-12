@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flask SocketIO Test</title>
+</head>
+<body>
+  <p>Some sample code to make sure Flask-SocketIO works...</p>
+  <form action="" method="get" class="form-example">
+	<div class="form-example">
+	  <label for="username">Enter your username: </label>
+	  <input type="text" name="username" id="username" required>
+	</div>
+	<div class="form-example">
+	  <input onclick="createGame()" type="submit" value="Ready!" formmethod="post">
+	</div>
+  </form>
+  <!-- <button onclick="createGame()">Create Game</button> -->
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // verify our websocket connection is established
+    socket.on('connect', function() {
+        console.log('Websocket connected!');
+    });
+    // message handler for the 'join_room' channel
+    socket.on('join_room', function(msg) {
+        console.log(msg);
+    });
+    // createGame onclick - emit a message on the 'create' channel to 
+    // create a new game with default parameters
+    function createGame() {
+	  let username_input = document.getElementById("username") 
+      console.log('Creating game...');
+      socket.emit('create', {username: String(username_input.value)});
+    }
+  </script>
+</body>
+</html>
