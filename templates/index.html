@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Flask SocketIO Test</title>
+</head>
+<body>
+  <p>Some sample code to make sure Flask-SocketIO works...</p>
+  <form action="" method="POST" class="form-example" id="submit-user">
+	  <div class="form-example">
+	    <label for="username">Enter your username: </label>
+	    <input type="text" name="username" id="username" required>
+	  </div>
+	  <div class="form-example">
+      <input type="submit" value="Ready!" formmethod="post">
+    </div>
+    <div class="form-example">
+	    <label for="room">Enter the room ID to join: </label>
+	    <input type="text" name="room" id="room">
+	  </div>
+    <div class="form-example">
+      <input type="submit" value="join" formmethod="post">
+    </div>
+  </form>
+
+  <div class="active_users" id="active_users">
+    <ul id="users">
+    </ul>
+  </div>
+  <!-- <button onclick="createGame()">Create Game</button> -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+  <script type="text/javascript" charset="utf-8">
+
+    let logged_users = [];
+    $("#submit-user").submit(function(e) {
+      e.preventDefault();
+      let username_input = document.getElementById("username");
+      let room_id = document.getElementById("room");
+      if(room_id.value) {
+        console.log('Joining rhe room: ' + room_id.value);
+        socket.emit('join', {username: String(username_input.value), room: String(room_id.value)});
+        return;
+      }
+      console.log('Creating game...');
+      socket.emit('create', {username: String(username_input.value)});
+    });
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    // verify our websocket connection is established
+    socket.on('connect', function() {
+        console.log('Websocket connected!');
+    });
+
+    // get room info from server
+    socket.on('joined_user', function(msg) {
+      let json = JSON.parse(msg)
+      console.log("the user " + json.username + " has joined the room " + json.room)
+    });
+
+    // message handler for the 'join_room' channel
+    socket.on('join_room', function(msg) {
+        console.log(msg);
+    });
+
+    // message handler for the 'active_users' channel
+    socket.on('active_users', function(msg) {
+        let json = JSON.parse(msg)
+        for(let i = 0; i < json.length; i++) {
+          let obj = json[i];
+          if(!logged_users.includes(obj.username)){
+            logged_users.push(obj.username)
+          }
+        }
+    });
+
+    socket.on('error', function(msg) {
+        console.log(msg);
+    });
+    
+    // createGame onclick - emit a message on the 'create' channel to 
+    // create a new game with default parameters
+    function sendUsername() {
+	    let username_input = document.getElementById("username") 
+      console.log('Creating game...');
+      socket.emit('create', {username: String(username_input.value)});
+    }
+
+    socket.on('print_users', function() {
+        console.log(logged_users);
+        if(!$("#users_paragraph").length){
+          $("#active_users").prepend("<p id=\"users_paragraph\">connected users are: </p>");
+        }
+        for(let i = 0; i < logged_users.length; i++) {
+          let exists=$('#users li:contains('+logged_users[i]+')').length;
+          if(!exists){
+            $("#users").append('<li>' + logged_users[i] + '</li>');
+          }
+        }
+    });
+  </script>
+</body>
+</html>
