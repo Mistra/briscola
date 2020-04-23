@@ -7,27 +7,39 @@
 <body>
   <p>Some sample code to make sure Flask-SocketIO works...</p>
   <form action="" method="POST" class="form-example" id="submit-user">
-	  <div class="form-example">
-	    <label for="username">Enter your username: </label>
-	    <input type="text" name="username" id="username" required>
-	  </div>
-	  <div class="form-example">
-      <input type="submit" value="Ready!" formmethod="post">
+    <div class="form-example">
+      <label for="username">Enter your username: </label>
+      <input type="text" name="username" id="username" required>
+    </div>
+    <div>
+      <p>Seleziona il numero di giocatori della partita:</p>
+      <input type="submit" id="two_players" name="players_number" value="2" required>
+      <label for="two_players">2 Giocatori</label><br>
+      <input type="submit" id="three_players" name="players_number" value="3">
+      <label for="three_players">3 Giocatori</label><br>
+      <input type="submit" id="four_players" name="players_number" value="4">
+      <label for="four_players">4 Giocatori</label>
     </div>
     <div class="form-example">
-	    <label for="room">Enter the room ID to join: </label>
-	    <input type="text" name="room" id="room">
-	  </div>
+      <label for="room">Enter the room ID to join: </label>
+      <input type="text" name="room" id="room">
+    </div>
     <div class="form-example">
       <input type="submit" value="join" formmethod="post">
     </div>
   </form>
 
+  <div id="print_room"></div>
+
   <div class="active_users" id="active_users">
     <ul id="users">
     </ul>
   </div>
-  <!-- <button onclick="createGame()">Create Game</button> -->
+
+  <div class="error_messages" id="error_messages">
+
+  </div>
+
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
   <script type="text/javascript" charset="utf-8">
@@ -37,13 +49,19 @@
       e.preventDefault();
       let username_input = document.getElementById("username");
       let room_id = document.getElementById("room");
+      let players_number = $("input[type=submit][clicked=true]").val()
+      console.log("players_number vale: " + players_number)
       if(room_id.value) {
         console.log('Joining rhe room: ' + room_id.value);
         socket.emit('join', {username: String(username_input.value), room: String(room_id.value)});
         return;
       }
       console.log('Creating game...');
-      socket.emit('create', {username: String(username_input.value)});
+      socket.emit('create', {username: String(username_input.value), players_number: String(players_number)});
+    });
+    $("#submit-user input[type=submit]").click(function() {
+        $("input[type=submit]", $(this).parents("#submit-user")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
     });
 
     var socket = io.connect('http://' + document.domain + ':' + location.port);
@@ -56,6 +74,9 @@
     socket.on('joined_user', function(msg) {
       let json = JSON.parse(msg)
       console.log("the user " + json.username + " has joined the room " + json.room)
+      if(!$("#print_room_paragraph").length){
+        $("#print_room").prepend("<p id=\"print_room_paragraph\">this is the room id to share with your friends: " + json.room + "</p>");
+      }
     });
 
     // message handler for the 'join_room' channel
@@ -74,14 +95,19 @@
         }
     });
 
-    socket.on('error', function(msg) {
-        console.log(msg);
+socket.on('error', function(msg) {
+        let error = JSON.parse(msg)
+        message_error = error.error_msg
+        console.log(message_error);
+        if(!$("#error_messages_paragraph").length){
+          $("#error_messages").prepend("<p id=\"error_messages_paragraph\">" + message_error + "</p>");
+        }
     });
     
     // createGame onclick - emit a message on the 'create' channel to 
     // create a new game with default parameters
     function sendUsername() {
-	    let username_input = document.getElementById("username") 
+      let username_input = document.getElementById("username") 
       console.log('Creating game...');
       socket.emit('create', {username: String(username_input.value)});
     }
