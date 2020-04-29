@@ -6,7 +6,7 @@
 
 ### Installation
 
-Dillinger requires [Python3](https://www.python.org/) to run.
+Briscola requires [Python3] to run.
 
 Create a virtualenv where to install dependencies
 ```sh
@@ -27,6 +27,6 @@ License
 
 MIT
 
-[//]:
-   [Briscola]: <https://en.wikipedia.org/wiki/Briscola>
-   [Flask]: <https://flask.palletsprojects.com/en/1.1.x/>
+[Briscola]: <https://en.wikipedia.org/wiki/Briscola>
+[Flask]: <https://flask.palletsprojects.com/en/1.1.x/>
+[Python3]: <https://www.python.org/>
