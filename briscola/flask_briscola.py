@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from flask_socketio import SocketIO, join_room, emit, send
-import game
+from briscola import game
 import random
 import string
 import json
