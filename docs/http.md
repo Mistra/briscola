@@ -6,17 +6,17 @@
 
   - tipo: **POST**
   - richiesta: {"name": "player_name"}
-  - risposta: {"player_id": "stringa_alfanumerica_8_caratteri", "lobby_id": "stringa_alfanumerica_10_caratteri"}
-  - header: Opzionale {"player_id": "stringa_alfanumerica_8_caratteri"}
+  - risposta: {"player_id": "abcdefgh", "lobby_id": "abcdefghij"}
+  - header: Opzionale {"player_id": "abcdefgh"}
 
 - lobby/join
   - tipo: **POST**
-  - richiesta: {"name": "player_name", "lobby_id": "stringa_alfanumerica_10_caratteri"}
-  - risposta: {"player_id": "stringa_alfanumerica_8_caratteri"}
-  - header: Opzionale {"player_id": "stringa_alfanumerica_8_caratteri"}
+  - richiesta: {"name": "player_name", "lobby_id": "abcdefghij"}
+  - risposta: {"player_id": "abcdefgh"}
+  - header: Opzionale {"player_id": "abcdefgh"}
 - lobby/{lobby_id}/leave
   - tipo: **GET**
-  - header: Opzionale {"player_id": "stringa_alfanumerica_8_caratteri"}
+  - header: Opzionale {"player_id": "abcdefgh"}
 - lobby/{lobby_id}/players
   - tipo: **GET**
   - risposta: [{"player_id": "abcdefgh", "player_name":"gino"}, {...}]
@@ -63,46 +63,3 @@
 - game/{lobby_id}/surrender
   - tipo: **POST**
   - richiesta: None
-
-# Interazione inizio partita
-
-## Scenario 1: Il giocatore A è uno stupido idiota
-
-Giocatore A senza ID_giocatore ne ID_lobby richiede lobby.
-Giocatore A lascia lobby.
-
-## Scenario 2: Il giocatore A è un troll
-
-Giocatore A senza ID_giocatore ne ID_lobby richiede lobby.
-Giocatore A lascia lobby.
-Giocatore A passa ID_lobby a Giocatore B.
-Giocatore B cerca di entrare e il server permette di entrare comunque (tiene/ricrea lobby?).
-
-## Scenario 3: Il giocatore A è bisognoso di briscola & B è un troll
-
-Giocatore A senza ID_giocatore ne ID_lobby richiede lobby.
-Giocatore A passa ID_lobby a Giocatore B.
-Giocatore B entra nella lobby.
-I giocatori conoscono i reciproci nomi.
-Giocatore B lascia subito dopo.
-Giocatore A resta nella lobby.
-
-## Scenario 4: I giocatori A e B sono bisognosi di briscola
-
-Ambo i giocatore sono in lobby e settano lo stato a ready.
-Il giocatore esegue i seguenti comandi una volta:
-
-- Mostrami la briscola
-
-Il giocatore esegue letture con i seguenti comandi (a ripetizione):
-
-- Mostrami le mie carte
-- Tocca a me?
-- Guarda che carte ci sono sul tavolo
-- Guarda l'ultima giocata
-- Guarda il mio punteggio
-
-Il giocatore può eseguire uno dei seguenti comandi:
-
-- Gioca carta
-- Arrenditi
