@@ -1,0 +1,107 @@
+## Endpoint Server
+
+### Lobby
+
+* lobby/create
+  tipo: **POST**
+  richiesta: {"name": "player_name"}
+  risposta: {"player_id": "stringa_alfanumerica_8_caratteri", "lobby_id": "stringa_alfanumerica_10_caratteri"}
+  header: Opzionale {"player_id": "stringa_alfanumerica_8_caratteri"}
+
+* lobby/join
+  tipo: **POST**
+  richiesta: {"name": "player_name", "lobby_id": "stringa_alfanumerica_10_caratteri"}
+  risposta: {"player_id": "stringa_alfanumerica_8_caratteri"}
+  header: Opzionale {"player_id": "stringa_alfanumerica_8_caratteri"}
+* lobby/{lobby_id}/leave
+  tipo: **GET**
+  header: Opzionale {"player_id": "stringa_alfanumerica_8_caratteri"}
+* lobby/{lobby_id}/players
+  tipo: **GET**
+  risposta: [{"player_id": "abcdefgh", "player_name":"gino"}, {...}]
+
+###  Game stato 0 (per ogni chiamata serve un header con player_id)
+
+* game/{lobby_id}/ready
+  tipo: **POST**
+  richiesta: {"state": true}
+* game/{lobby_id}/stats
+  tipo: **GET**
+  richiesta: statistiche, da definire
+* game/{lobby_id}/player_state
+  tipo: **GET**
+  risposta: [{"player_id": "abcdefgh", "state":true}, {...}]
+
+### Game stato 1 (per ogni chiamata serve un header con player_id)
+
+* game/{lobby_id}/cards
+  tipo: **GET**
+  risposta: {"cards": [{"suit": "1", "rank": "1"}, {"suit": "2", "rank": "2"}, {"suit": "3", "rank": "3"}]}
+* game/{lobby_id}/play_card
+  tipo: **POST**
+  richiesta: {"card": {"suit": "1", "rank": "1"}}
+  risposta: None
+* game/{lobby_id}/last_played_hand (**nota** ha senso dire che questa chiamata non è vincolata allo stato del game?)
+  tipo: **GET**
+  risposta: {"last_hand": {"winner_player_id": "abcdefgh", "winner_card":{"suit": "1", "rank": "1"}, "loser_card":{"suit": "2", "rank": "2"}}}
+* game/{lobby_id}/cards_on_table
+  tipo: **GET**
+  risposta: {"card": {"suit": "1", "rank": "1"} ... }
+* game/{lobby_id}/my_turn
+  tipo: **GET**
+  risposta: {"my_turn": true }
+* game/{lobby_id}/my_score
+  tipo: **GET**
+  risposta: {"actual_score": "23" }
+* game/{lobby_id}/briscola
+  tipo: **GET**
+  risposta: {"card": {"suit": "1", "rank": "1"}}
+* game/{lobby_id}/deck_size
+  tipo: **GET**
+  risposta: {"size": 22}
+* game/{lobby_id}/surrender
+  tipo: **POST**
+  richiesta: None
+
+## Interazione inizio partita
+
+### Scenario 1: Il giocatore A è uno stupido idiota
+
+Giocatore A senza ID_giocatore ne ID_lobby richiede lobby.
+Giocatore A lascia lobby.
+
+### Scenario 2: Il giocatore A è un troll
+
+Giocatore A senza ID_giocatore ne ID_lobby richiede lobby.
+Giocatore A lascia lobby.
+Giocatore A passa ID_lobby a Giocatore B.
+Giocatore B cerca di entrare e il server permette di entrare comunque (tiene/ricrea lobby?).
+
+### Scenario 3: Il giocatore A è bisognoso di briscola & B è un troll
+
+Giocatore A senza ID_giocatore ne ID_lobby richiede lobby.
+Giocatore A passa ID_lobby a Giocatore B.
+Giocatore B entra nella lobby.
+I giocatori conoscono i reciproci nomi.
+Giocatore B lascia subito dopo.
+Giocatore A resta nella lobby.
+
+### Scenario 4: I giocatori A e B sono bisognosi di briscola
+
+Ambo i giocatore sono in lobby e settano lo stato a ready.
+Il giocatore esegue i seguenti comandi una volta:
+
+* Mostrami la briscola
+
+Il giocatore esegue letture con i seguenti comandi (a ripetizione):
+
+* Mostrami le mie carte
+* Tocca a me?
+* Guarda che carte ci sono sul tavolo
+* Guarda l'ultima giocata
+* Guarda il mio punteggio
+
+Il giocatore può eseguire uno dei seguenti comandi:
+
+* Gioca carta
+* Arrenditi
