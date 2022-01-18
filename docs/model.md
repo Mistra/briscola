@@ -73,6 +73,17 @@ Al procedere dell'avanzamento del gioco il deck perde progressivamente carte fin
 }
 ```
 
+## Player
+
+Il giocatore rappresenta l'entità giocante. Al momento è provvisto di un id univoco e di un nome.
+
+```json
+{
+  "id": "abcdefgh",
+  "name": "John Doe"
+}
+```
+
 ## PlayerHand
 
 Ogni giocatore presente in un gioco iniziato possiede una mano di carte (3 o meno) giocabili quando il suo turno lo consente.
@@ -86,6 +97,21 @@ Ogni giocatore presente in un gioco iniziato possiede una mano di carte (3 o men
     { "suit": 1, "rank": 1 },
     { "suit": 2, "rank": 2 },
     { "suit": 3, "rank": 3 }
+  ]
+}
+```
+
+## TableHand
+
+La mano del tavolo contiene le carte attualmente in gioco, il numero è variabile tra 0 e 2.
+
+```json
+{
+  "id": 1,
+  "game_id": 1,
+  "play": [
+    { "player_id": "abcdefgh", "card": { "suit": 1, "rank": 1 } },
+    { "player_id": "bbcdefgh", "card": { "suit": 2, "rank": 2 } }
   ]
 }
 ```

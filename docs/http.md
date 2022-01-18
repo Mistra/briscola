@@ -21,7 +21,7 @@
   - tipo: **GET**
   - risposta: [{"player_id": "abcdefgh", "player_name":"gino"}, {...}]
 
-## Game stato 0 (per ogni chiamata serve un header con player_id)
+## Game (per ogni chiamata serve un header con player_id)
 
 - game/{lobby_id}/ready
   - tipo: **POST**
@@ -32,9 +32,6 @@
 - game/{lobby_id}/player_state
   - tipo: **GET**
   - risposta: [{"player_id": "abcdefgh", "state":true}, {...}]
-
-## Game stato 1 (per ogni chiamata serve un header con player_id)
-
 - game/{lobby_id}/cards
   - tipo: **GET**
   - risposta: {"cards": [{"suit": "1", "rank": "1"}, {"suit": "2", "rank": "2"}, {"suit": "3", "rank": "3"}]}
