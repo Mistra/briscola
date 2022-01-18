@@ -25,10 +25,10 @@ class Card():
     value = None
     suit = None
 
-    def __new__(cls, value, suit):
-        if isinstance(value, CardValue):
+    def __init__(self, value, suit):
+        if not isinstance(value, CardValue):
             raise ValueError("value must be a CardValue")
-        if isinstance(suit, CardSuit):
+        if not isinstance(suit, CardSuit):
             raise ValueError("suit must be a CardSuit")
-        cls.value = value
-        cls.suit = suit
+        self.value = value
+        self.suit = suit
