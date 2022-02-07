@@ -186,3 +186,6 @@ About
 
 # Local History for Visual Studio Code
 .history/
+
+api-query-examples.http
+database/*.db
