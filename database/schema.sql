@@ -24,7 +24,8 @@ DROP TABLE IF EXISTS deck;
 CREATE TABLE deck (
     game_id VARCHAR(36) NOT NULL,
     card_suit INTEGER NOT NULL,
-    card_rank INTEGER NOT NULL
+    card_rank INTEGER NOT NULL,
+    drew_by VARCHAR(36)
 );
 
 DROP TABLE IF EXISTS game;
