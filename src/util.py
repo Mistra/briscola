@@ -16,12 +16,8 @@ def calculate_winning_hand(cards: List[Card], trump_suit: CardSuit) -> Card:
 
 
 def calculate_winning_stack(stack_list: List[List[Card]]) -> int:
-    return stack_list.index([max(calculate_stack_score(stack)) for stack in stack_list])
-
-# #indices = [index for index, element in enumerate(a_list) if element == [max(calculate_stack_score(stack)) for stack in stack_list]]
-# #planets = [['Mercury', 'Venus', 'Earth'], ['Mars', 'Jupiter', 'Saturn'], ['Uranus', 'Neptune', 'Pluto']]
-# #flatten_planets = [planet for sublist in planets for planet in sublist if len(planet) < 6]
+    return max(range(len(stack_list)), key=lambda i: calculate_stack_score(stack_list[i]))
 
 
 def calculate_stack_score(stack: List[Card]) -> int:
-    return [sum(get_card_point(card.value)) for card in stack]
+    return sum(get_card_point(card.value) for card in stack)
