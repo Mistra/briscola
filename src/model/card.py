@@ -31,19 +31,6 @@ def get_card_point(card_value: int) -> int:
         case _: return 0
 
 
-# class CardPoint(enum.IntEnum):
-#     DEUCE = 0
-#     FOUR = 0
-#     FIVE = 0
-#     SIX = 0
-#     SEVEN = 0
-#     JACK = 1
-#     QUEEN = 2
-#     KING = 3
-#     THREE = 10
-#     ACE = 11
-
-
 class Card():
     value = None
     suit = None

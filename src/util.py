@@ -4,6 +4,7 @@ from src.model.card import Card, CardSuit, get_card_point
 
 
 def calculate_winning_hand(cards: List[Card], trump_suit: CardSuit) -> Card:
+    '''Given a hand of cards, calculate the winning card'''
     if len(cards) == 0:
         raise ValueError("No cards")
 
@@ -16,8 +17,10 @@ def calculate_winning_hand(cards: List[Card], trump_suit: CardSuit) -> Card:
 
 
 def calculate_winning_stack(stack_list: List[List[Card]]) -> int:
+    '''Given a pile of cards, calculate the one with the highest score'''
     return max(range(len(stack_list)), key=lambda i: calculate_stack_score(stack_list[i]))
 
 
 def calculate_stack_score(stack: List[Card]) -> int:
+    '''Given a stack of cards, calculate the score'''
     return sum(get_card_point(card.value) for card in stack)

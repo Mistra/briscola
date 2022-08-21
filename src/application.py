@@ -22,7 +22,15 @@ app.register_blueprint(player_endpoint, url_prefix='/players')
 
 # The following line sets the root logger level as well.
 # It's equivalent to both previous statements combined:
-logging.basicConfig(level=logging.NOTSET)
+logging.basicConfig(level=logging.DEBUG)
+
+
+def pirate_game():
+    logging.debug("Starting pirate game")
+
 
 if __name__ == "__main__":
+
+    pirate_game()
+    app.logger.info('%s logged in successfully', "user.username")
     Flask.run(app, host="0.0.0.0", debug=True)
