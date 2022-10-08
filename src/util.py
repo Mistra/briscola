@@ -1,6 +1,7 @@
 from typing import List
 
-from src.model.card import Card, CardSuit, get_card_point
+from src.model.card import Card, CardSuit
+from src.model.won_stack import WonStack
 
 
 def calculate_winning_hand(cards: List[Card], trump_suit: CardSuit) -> Card:
@@ -16,11 +17,6 @@ def calculate_winning_hand(cards: List[Card], trump_suit: CardSuit) -> Card:
     return max(filtered_cards, key=lambda c: c.value)
 
 
-def calculate_winning_stack(stack_list: List[List[Card]]) -> int:
-    '''Given a pile of cards, calculate the one with the highest score'''
-    return max(range(len(stack_list)), key=lambda i: calculate_stack_score(stack_list[i]))
-
-
-def calculate_stack_score(stack: List[Card]) -> int:
-    '''Given a stack of cards, calculate the score'''
-    return sum(get_card_point(card.value) for card in stack)
+# def calculate_winning_stack(stack_list: List[List[Card]]) -> int:
+#     '''Given a pile of cards, calculate the one with the highest score'''
+#     return max(range(len(stack_list)), key=lambda i: calculate_stack_score(stack_list[i]))

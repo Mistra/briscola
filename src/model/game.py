@@ -2,10 +2,16 @@
 
 class Game():
     id = None
-    lobby_id = None
     created_at = None
+    hands = None
+    deck = None
+    won_stacks = None
+    trump = None
 
-    def __init__(self, id, lobby_id, created_at=None):
-        self.id = id
-        self.lobby_id = lobby_id
-        self.created_at = created_at
+
+# def __init__(self, id, deck, hands, won_stacks, trump):
+#     self.id = id
+#     self.deck = deck
+#     self.hands = hands
+#     self.won_stacks = won_stacks
+#     self.trump = trump

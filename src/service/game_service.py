@@ -1,65 +1,43 @@
 
 import logging
+import random
 from datetime import datetime
 from uuid import uuid4 as uuid
 
 from src.model.deck import Deck
 from src.model.game import Game
-
-# {
-#     deck_remaining_card_count: 10,
-#     deck_last_card: {...},
-#     players_state: [
-#         player_id: abc,
-#         player_hand: {
-#             card_count: 3,
-#             cards: [
-#                 {...},
-#                 {...},
-#                 {...}
-#             ]
-#         },
-#         played_card: {...}
-#         player_stack_count: 4,
-#     ]
-# }
-
-
-class GameState:
-    deck_remaining_card_count = None
-    deck_last_card = None
-    players_state = None
-
-
-class PlayerState:
-    player_id = None
-    player_hand = None
-
-
-class PlayerHand:
-    card_count = None
-    cards = None
-    played_card = None
-    player_stack_count = None
+from src.model.hand import Hand
+from src.model.won_stack import WonStack
 
 
 class GameService:
     datetime = None
     id_generator = None
-    deck_repository = None
+    game_repository = None
 
-    def __init__(self, deck_repository=None):
+    def __init__(self, game_repository=None):
         self.datetime = datetime
         self.id_generator = uuid
+        self.game_repository = game_repository
 
-    def create(self, lobby_id):
-        # initialize a deck and save it
-        game_id = str(self.id_generator())
-        created_at = self.datetime.now()
-        game = Game(game_id, lobby_id, created_at)
-        deck = Deck()
-        deck.shuffle()
-        # self.game_repository.create(game, deck)
+    def create(self, player_ids: list[uuid]):
+        logging.debug('Setting up the game for players: %s', player_ids)
+
+        game = Game()
+
+        game.id = str(self.id_generator())
+
+        deck = Deck.init_shuffled()
+
+        # decide player's turn
+        random.shuffle(player_ids)
+
+        # create hands for each player
+        game.hands = self._create_hands(player_ids, deck)
+        game.deck = deck
+        game.won_stacks = self._create_won_stacks(player_ids)
+
+        self.game_repository.save(game)
 
     def fetch_state(self, game_id, player_id):
         # check what's in player's hands
@@ -70,24 +48,26 @@ class GameService:
         # check deck (number of cards and briscola/last)
         pass
 
-    def check_hand(self, game_id, player_id):
-        pass
+    def _create_won_stacks(self, player_ids: list[uuid]) -> list[WonStack]:
+        won_stacks = []
+        for player_id in player_ids:
+            won_stack = WonStack()
 
-    def check_table(self, game_id, player_id):
-        pass
+            won_stack.id = str(self.id_generator())
+            won_stack.player_id = player_id
+            won_stack.cards = []
 
-    def check_stack(self, game_id, player_id):
-        pass
+        return won_stacks
 
-    def check_deck(self, game_id, player_id):
-        pass
+    def _create_hands(self, player_ids: list[uuid], deck: Deck) -> list[Hand]:
+        hands = []
+        for turn, player_id in enumerate(player_ids):
+            hand = Hand()
 
-    # def play_card(self, game_id, player_id, card):
-    #     if (not is_player_turn(player_id, game_id)):
-    #         # raise exception
-    #         pass
-    #     if (not has_card_in_hand(card, player_id, game_id)):
-    #         # raise exception
-    #         pass
+            hand.id = str(self.id_generator())
+            hand.created_at = hand.updated_at = self.datetime.now()
+            hand.turn = turn
+            hand.player_id = player_id
+            hand.cards = deck.pick(3)
 
-    #     pass
+        return hands

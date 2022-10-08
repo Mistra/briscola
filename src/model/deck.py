@@ -1,24 +1,39 @@
 import random
 
-import src.model.card as card
+from src.model.card import Card, CardSuit, CardValue
 
 
 class Deck():
     cards = []
+    rnd = random
 
-    def __init__(self):
+    def __init__(self, cards=None):
         self.cards = [
-            card.Card(value, suit) for suit in card.CardSuit for value in card.CardValue
-        ]
+            Card(value, suit) for suit in CardSuit for value in CardValue
+        ] if cards is None else cards
+
+    @staticmethod
+    def init_shuffled():
+        '''Returns an initialized and shuffled deck'''
+        deck = Deck()
+        deck.shuffle()
+        return deck
 
     def shuffle(self):
         '''Shuffle the deck'''
-        random.seed(1)
-        random.shuffle(self.cards)
+        self.rnd.shuffle(self.cards)
 
-    def pick_next(self):
-        '''Pick the next card from the deck'''
-        return self.cards.pop()
+    def pick(self, amount: int = 1) -> Card:
+        '''Pick the next n cards from the deck, if amount is not specified, pick 1'''
+
+        if len(self.cards) < amount:
+            raise Exception('Not enough cards in the deck')
+
+        remaining_cards = self.cards[:len(self.cards) - amount]
+        picked_cards = self.cards[len(self.cards) - amount:]
+        self.cards = remaining_cards
+
+        return picked_cards
 
     def is_empty(self):
         '''Check if the deck is empty'''
