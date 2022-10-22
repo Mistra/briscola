@@ -1,7 +1,6 @@
 import sqlite3
 
 from flask import current_app, g
-from flask.cli import with_appcontext
 
 
 def get_db_connection():
@@ -17,7 +16,7 @@ def get_db_connection():
 
 
 def close_db(e=None):
-    db = g.pop('db', None)
+    database_conn = g.pop('db', None)
 
-    if db is not None:
-        db.close()
+    if database_conn is not None:
+        database_conn.close()
