@@ -1,7 +1,6 @@
 from typing import List
 
 from src.model.card import Card, CardSuit
-from src.model.won_stack import WonStack
 
 
 def calculate_winning_hand(cards: List[Card], trump_suit: CardSuit) -> Card:
