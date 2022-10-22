@@ -38,3 +38,6 @@ class Deck():
     def is_empty(self):
         '''Check if the deck is empty'''
         return len(self.cards) == 0
+
+    def __eq__(self, other) -> bool:
+        return self.cards == other.cards
