@@ -28,14 +28,7 @@ CREATE TABLE deck (
     drew_by VARCHAR(36)
 );
 
-DROP TABLE IF EXISTS game;
-CREATE TABLE game (
-    id VARCHAR(36) PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_activity_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    state INTEGER NOT NULL,
-    deck_id VARCHAR(36) NOT NULL
-);
+
 
 DROP TABLE IF EXISTS game_player;
 CREATE TABLE game_player (
@@ -45,11 +38,28 @@ CREATE TABLE game_player (
     score INTEGER NOT NULL
 );
 
+DROP TABLE IF EXISTS stack;
+CREATE TABLE stack (
+    id VARCHAR(36) PRIMARY KEY,
+    game_id VARCHAR(36) NOT NULL,
+    player_id VARCHAR(36) NOT NULL,
+    cards JSON
+);
+
+DROP TABLE IF EXISTS game;
+CREATE TABLE game (
+    id VARCHAR(36) PRIMARY KEY,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deck JSON
+);
+
 DROP TABLE IF EXISTS player_hand;
 CREATE TABLE player_hand (
     id VARCHAR(36) PRIMARY KEY,
     game_id VARCHAR(36) NOT NULL,
     player_id VARCHAR(36) NOT NULL,
-    card_suit INTEGER NOT NULL,
-    card_rank INTEGER NOT NULL
+    cards JSON,
+    turn INTEGER NOT NULL,
+    played_card JSON,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
