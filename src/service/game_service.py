@@ -7,7 +7,7 @@ from uuid import uuid4 as uuid
 from src.model.deck import Deck
 from src.model.game import Game
 from src.model.hand import Hand
-from src.model.won_stack import WonStack
+from src.model.stack import Stack
 
 
 class GameService:
@@ -48,10 +48,10 @@ class GameService:
         # check deck (number of cards and briscola/last)
         pass
 
-    def _create_won_stacks(self, player_ids: list[uuid]) -> list[WonStack]:
+    def _create_won_stacks(self, player_ids: list[uuid]) -> list[Stack]:
         won_stacks = []
         for player_id in player_ids:
-            won_stack = WonStack()
+            won_stack = Stack()
 
             won_stack.id = str(self.id_generator())
             won_stack.player_id = player_id
