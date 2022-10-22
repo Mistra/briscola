@@ -1,9 +1,16 @@
-DROP TABLE IF EXISTS lobby;
-CREATE TABLE lobby (
-    id VARCHAR(36) PRIMARY KEY,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    last_activity_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+-- DROP TABLE IF EXISTS lobby;
+-- CREATE TABLE lobby (
+--     id VARCHAR(36) PRIMARY KEY,
+--     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+--     last_activity_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+-- );
+
+-- DROP TABLE IF EXISTS lobby_player;
+-- CREATE TABLE lobby_player (
+--     id VARCHAR(36) PRIMARY KEY,
+--     lobby_id VARCHAR(36) NOT NULL,
+--     player_id VARCHAR(36) NOT NULL
+-- );
 
 DROP TABLE IF EXISTS player;
 CREATE TABLE player (
@@ -13,29 +20,11 @@ CREATE TABLE player (
     last_seen TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-DROP TABLE IF EXISTS lobby_player;
-CREATE TABLE lobby_player (
-    id VARCHAR(36) PRIMARY KEY,
-    lobby_id VARCHAR(36) NOT NULL,
-    player_id VARCHAR(36) NOT NULL
-);
-
-DROP TABLE IF EXISTS deck;
-CREATE TABLE deck (
-    game_id VARCHAR(36) NOT NULL,
-    card_suit INTEGER NOT NULL,
-    card_rank INTEGER NOT NULL,
-    drew_by VARCHAR(36)
-);
-
-
-
 DROP TABLE IF EXISTS game_player;
 CREATE TABLE game_player (
     id VARCHAR(36) PRIMARY KEY,
     game_id VARCHAR(36) NOT NULL,
-    player_id VARCHAR(36) NOT NULL,
-    score INTEGER NOT NULL
+    player_id VARCHAR(36) NOT NULL
 );
 
 DROP TABLE IF EXISTS stack;
