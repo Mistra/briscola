@@ -1,9 +1,13 @@
 
 
+from datetime import datetime
+from uuid import uuid4
+
+
 class Player:
-    id: None
-    name: None
-    created_at: None
+    id: uuid4
+    name: str
+    created_at: datetime
 
     def __eq__(self, other) -> bool:
         return self.id == other.id and \
