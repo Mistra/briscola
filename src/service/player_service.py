@@ -20,16 +20,12 @@ class PlayerService():
     def create(self, player):
         player.id = str(self.id_generator())
         player.created_at = self.datetime.now()
-        player.last_seen = self.datetime.now()
         logging.info("Creating player: %s", player.__dict__)
         player = self.player_repository.save(player)
         return player
 
     def get_by_id(self, player_id):
-        return self.player_repository.get_by_id(player_id)
-
-    def get_all(self):
-        return self.player_repository.get_all()
+        return self.player_repository.find_by_id(player_id)
 
     def delete_by_id(self, player_id):
         self.player_repository.delete_by_id(player_id)
