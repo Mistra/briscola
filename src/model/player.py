@@ -4,7 +4,6 @@ class Player:
     id: None
     name: None
     created_at: None
-    last_seen: None
 
     def __eq__(self, other) -> bool:
         return self.id == other.id and \
