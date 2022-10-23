@@ -24,7 +24,7 @@ class PlayerService():
         player = self.player_repository.save(player)
         return player
 
-    def get_by_id(self, player_id):
+    def find_by_id(self, player_id):
         return self.player_repository.find_by_id(player_id)
 
     def delete_by_id(self, player_id):

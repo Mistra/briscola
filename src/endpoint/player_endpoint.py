@@ -13,7 +13,7 @@ player_endpoint = Blueprint('player_endpoint', __name__)
 @player_endpoint.route('/<player_id>', methods=["GET"])
 def get_by_id(player_id):
     player_service = PlayerService()
-    player = player_service.get_by_id(player_id)
+    player = player_service.find_by_id(player_id)
 
     return Response(
         jsonpickle.encode(player, unpicklable=False, make_refs=False),
