@@ -15,6 +15,9 @@ def get_by_id(player_id):
     player_service = PlayerService()
     player = player_service.find_by_id(player_id)
 
+    if player is None:
+        return Response(status=404)
+
     return Response(
         jsonpickle.encode(player, unpicklable=False, make_refs=False),
         mimetype="application/json"
