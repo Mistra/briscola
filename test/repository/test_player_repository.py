@@ -9,7 +9,7 @@ from src.model.player import Player
 from src.repository.player_repository import PlayerRepository
 
 
-class TestStackRepository(unittest.TestCase):
+class TestPlayerRepository(unittest.TestCase):
     def setUp(self):
         self.db_conn = sqlite3.connect(":memory:")
         cursor = self.db_conn.cursor()
