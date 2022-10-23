@@ -1,7 +1,6 @@
 
 
 import logging
-from datetime import datetime
 
 from src.model.game_player import GamePlayer
 from src.repository.db_factory import get_db_connection

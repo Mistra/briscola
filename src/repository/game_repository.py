@@ -1,6 +1,5 @@
 
 import logging
-from datetime import datetime
 
 import jsonpickle
 from src.model.game import Game
@@ -54,6 +53,6 @@ class GameRepository:
     def __row_to_game(self, row):
         game = Game()
         game.id = row[0]
-        game.created_at = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S')
+        game.created_at = row[1]
         game.deck = jsonpickle.decode(row[2])
         return game

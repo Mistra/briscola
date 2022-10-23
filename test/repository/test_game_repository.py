@@ -13,7 +13,10 @@ from src.repository.game_repository import GameRepository
 
 class TestGameRepository(unittest.TestCase):
     def setUp(self):
-        self.db_conn = sqlite3.connect(":memory:")
+        self.db_conn = sqlite3.connect(
+            ":memory:",
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
         cursor = self.db_conn.cursor()
 
         create_table_sql = None
@@ -39,7 +42,7 @@ class TestGameRepository(unittest.TestCase):
         row = self.db_conn.execute(query).fetchone()
 
         self.assertEqual(row[0], game.id)
-        self.assertEqual(row[1], "2000-01-01 00:00:00")
+        self.assertEqual(row[1], datetime(2000, 1, 1, 0, 0, 0))
         self.assertEqual(row[2], jsonpickle.encode(game.deck))
 
     def test_update(self):
@@ -53,7 +56,7 @@ class TestGameRepository(unittest.TestCase):
         query = "SELECT * FROM game"
         row = self.db_conn.execute(query).fetchone()
 
-        self.assertEqual(row[1], "2000-01-02 00:00:00")
+        self.assertEqual(row[1], datetime(2000, 1, 2, 0, 0, 0))
 
     def test_find_by_id(self):
         game_repository = GameRepository(self.db_conn)

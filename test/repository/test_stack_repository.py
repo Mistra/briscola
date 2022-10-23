@@ -12,7 +12,10 @@ from src.repository.stack_repository import StackRepository
 
 class TestStackRepository(unittest.TestCase):
     def setUp(self):
-        self.db_conn = sqlite3.connect(":memory:")
+        self.db_conn = sqlite3.connect(
+            ":memory:",
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
         cursor = self.db_conn.cursor()
 
         create_table_sql = None

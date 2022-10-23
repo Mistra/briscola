@@ -3,7 +3,6 @@
 import re
 import sqlite3
 import unittest
-from datetime import datetime
 
 from src.model.game_player import GamePlayer
 from src.repository.game_player_repository import GamePlayerRepository
@@ -11,7 +10,10 @@ from src.repository.game_player_repository import GamePlayerRepository
 
 class TestGamePlayerRepository(unittest.TestCase):
     def setUp(self):
-        self.db_conn = sqlite3.connect(":memory:")
+        self.db_conn = sqlite3.connect(
+            ":memory:",
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
         cursor = self.db_conn.cursor()
 
         create_table_sql = None

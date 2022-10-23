@@ -13,7 +13,10 @@ from src.repository.hand_repository import HandRepository
 
 class TestHandRepository(unittest.TestCase):
     def setUp(self):
-        self.db_conn = sqlite3.connect(":memory:")
+        self.db_conn = sqlite3.connect(
+            ":memory:",
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
         cursor = self.db_conn.cursor()
 
         create_table_sql = None
@@ -44,7 +47,7 @@ class TestHandRepository(unittest.TestCase):
         self.assertEqual(row[3], jsonpickle.encode(hand.cards))
         self.assertEqual(row[4], hand.turn)
         self.assertEqual(row[5], jsonpickle.encode(hand.played_card))
-        self.assertEqual(row[6], "2000-01-01 00:00:00")
+        self.assertEqual(row[6], datetime(2000, 1, 1, 0, 0, 0))
 
     def test_update(self):
         hand = self.__dummy_hand()

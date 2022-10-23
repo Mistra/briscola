@@ -57,5 +57,5 @@ class PlayerRepository:
         player = Player()
         player.id = row[0]
         player.name = row[1]
-        player.created_at = datetime.strptime(row[2], '%Y-%m-%d %H:%M:%S')
+        player.created_at = row[2]
         return player

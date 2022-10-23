@@ -11,7 +11,10 @@ from src.repository.player_repository import PlayerRepository
 
 class TestPlayerRepository(unittest.TestCase):
     def setUp(self):
-        self.db_conn = sqlite3.connect(":memory:")
+        self.db_conn = sqlite3.connect(
+            ":memory:",
+            detect_types=sqlite3.PARSE_DECLTYPES
+        )
         cursor = self.db_conn.cursor()
 
         create_table_sql = None
@@ -38,7 +41,7 @@ class TestPlayerRepository(unittest.TestCase):
 
         self.assertEqual(row[0], player.id)
         self.assertEqual(row[1], player.name)
-        self.assertEqual(row[2], "2000-01-01 00:00:00")
+        self.assertEqual(row[2], datetime(2000, 1, 1, 0, 0, 0))
 
     def test_update(self):
         player = self.__dummy_player()

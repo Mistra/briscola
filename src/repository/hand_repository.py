@@ -1,5 +1,4 @@
 import logging
-from datetime import datetime
 
 import jsonpickle
 from src.model.hand import Hand
@@ -73,5 +72,5 @@ class HandRepository:
         hand.cards = jsonpickle.decode(row[3])
         hand.turn = row[4]
         hand.played_card = jsonpickle.decode(row[5])
-        hand.updated_at = datetime.strptime(row[6], '%Y-%m-%d %H:%M:%S')
+        hand.updated_at = row[6]
         return hand
