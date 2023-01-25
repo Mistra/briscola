@@ -19,7 +19,7 @@ class GameRepository:
         INSERT OR REPLACE INTO game (
             id,
             created_at,
-            deck
+            cards
         ) VALUES (?, ?, ?)
         '''
 
@@ -28,7 +28,7 @@ class GameRepository:
             (
                 game.id,
                 game.created_at,
-                jsonpickle.encode(game.deck)
+                jsonpickle.encode(game.cards)
             )
         )
         self.database.commit()
@@ -54,5 +54,5 @@ class GameRepository:
         game = Game()
         game.id = row[0]
         game.created_at = row[1]
-        game.deck = jsonpickle.decode(row[2])
+        game.cards = jsonpickle.decode(row[2])
         return game

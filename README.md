@@ -20,7 +20,8 @@ $ flask run
 ```
 
 ### Todos
-- almost everything
+- Create DTOs (actually 2 player and game)
+- See if GameRepository can be used as a master repo when game needs to be created (refactoring needed?)
 
 License
 ----

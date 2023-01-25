@@ -43,7 +43,7 @@ class TestGameRepository(unittest.TestCase):
 
         self.assertEqual(row[0], game.id)
         self.assertEqual(row[1], datetime(2000, 1, 1, 0, 0, 0))
-        self.assertEqual(row[2], jsonpickle.encode(game.deck))
+        self.assertEqual(row[2], jsonpickle.encode(game.cards))
 
     def test_update(self):
         game = self.__dummy_game()
@@ -83,7 +83,7 @@ class TestGameRepository(unittest.TestCase):
         game = Game()
         game.id = "123-456"
         game.created_at = datetime(2000, 1, 1, 0, 0, 0)
-        game.deck = Deck()
+        game.cards = Deck()
         return game
 
 

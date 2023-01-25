@@ -4,12 +4,15 @@ import re
 import sqlite3
 import unittest
 
+from flask import Flask
+
 from src.model.game_player import GamePlayer
 from src.repository.game_player_repository import GamePlayerRepository
 
 
 class TestGamePlayerRepository(unittest.TestCase):
     def setUp(self):
+        self.app = Flask(__name__)
         self.db_conn = sqlite3.connect(
             ":memory:",
             detect_types=sqlite3.PARSE_DECLTYPES
@@ -31,49 +34,53 @@ class TestGamePlayerRepository(unittest.TestCase):
         self.db_conn.close()
 
     def test_create(self):
-        game_player = self.__dummy_game_player()
-        game_player_repository = GamePlayerRepository(self.db_conn)
-        game_player_repository.save(game_player)
+        with self.app.app_context():
+            game_player = self.__dummy_game_player()
+            game_player_repository = GamePlayerRepository(self.db_conn)
+            game_player_repository.save(game_player)
 
-        query = "SELECT * FROM game_player"
-        row = self.db_conn.execute(query).fetchone()
+            query = "SELECT * FROM game_player"
+            row = self.db_conn.execute(query).fetchone()
 
-        self.assertEqual(row[0], game_player.id)
-        self.assertEqual(row[1], game_player.game_id)
-        self.assertEqual(row[2], game_player.player_id)
+            self.assertEqual(row[0], game_player.id)
+            self.assertEqual(row[1], game_player.game_id)
+            self.assertEqual(row[2], game_player.player_id)
 
     def test_update(self):
-        game_player = self.__dummy_game_player()
-        game_player_repository = GamePlayerRepository(self.db_conn)
-        game_player_repository.save(game_player)
+        with self.app.app_context():
+            game_player = self.__dummy_game_player()
+            game_player_repository = GamePlayerRepository(self.db_conn)
+            game_player_repository.save(game_player)
 
-        game_player.game_id = "987"
-        game_player_repository.save(game_player)
+            game_player.game_id = "987"
+            game_player_repository.save(game_player)
 
-        query = "SELECT * FROM game_player"
-        row = self.db_conn.execute(query).fetchone()
+            query = "SELECT * FROM game_player"
+            row = self.db_conn.execute(query).fetchone()
 
-        self.assertEqual(row[1], "987")
+            self.assertEqual(row[1], "987")
 
     def test_find_by_id(self):
-        game_player_repository = GamePlayerRepository(self.db_conn)
-        game_player = self.__dummy_game_player()
+        with self.app.app_context():
+            game_player_repository = GamePlayerRepository(self.db_conn)
+            game_player = self.__dummy_game_player()
 
-        result = game_player_repository.find_by_id(game_player.id)
-        self.assertEqual(result, None)
+            result = game_player_repository.find_by_id(game_player.id)
+            self.assertEqual(result, None)
 
-        game_player_repository.save(game_player)
-        result = game_player_repository.find_by_id(game_player.id)
-        self.assertEqual(result, game_player)
+            game_player_repository.save(game_player)
+            result = game_player_repository.find_by_id(game_player.id)
+            self.assertEqual(result, game_player)
 
     def test_delete_by_id(self):
-        game_player_repository = GamePlayerRepository(self.db_conn)
-        game_player = self.__dummy_game_player()
-        game_player_repository.save(game_player)
-        game_player_repository.delete_by_id(game_player.id)
+        with self.app.app_context():
+            game_player_repository = GamePlayerRepository(self.db_conn)
+            game_player = self.__dummy_game_player()
+            game_player_repository.save(game_player)
+            game_player_repository.delete_by_id(game_player.id)
 
-        result = game_player_repository.find_by_id(game_player.id)
-        self.assertEqual(result, None)
+            result = game_player_repository.find_by_id(game_player.id)
+            self.assertEqual(result, None)
 
     def __dummy_game_player(self) -> GamePlayer:
         game_player = GamePlayer()

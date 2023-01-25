@@ -19,7 +19,7 @@ class PlayerService():
 
     def create(self, player):
         player.id = str(self.id_generator())
-        player.created_at = self.datetime.now()
+        player.created_at = self.datetime.utcnow()
         logging.info("Creating player: %s", player.__dict__)
         player = self.player_repository.save(player)
         return player
