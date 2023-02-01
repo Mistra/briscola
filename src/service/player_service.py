@@ -1,5 +1,3 @@
-
-
 import logging
 from datetime import datetime
 from uuid import uuid4 as uuid
@@ -7,7 +5,7 @@ from uuid import uuid4 as uuid
 from src.repository.player_repository import PlayerRepository
 
 
-class PlayerService():
+class PlayerService:
     player_repository = None
     datetime = None
     id_generator = None
@@ -19,7 +17,7 @@ class PlayerService():
 
     def create(self, player):
         player.id = str(self.id_generator())
-        player.created_at = self.datetime.now()
+        player.created_at = self.datetime.utcnow()
         logging.info("Creating player: %s", player.__dict__)
         player = self.player_repository.save(player)
         return player

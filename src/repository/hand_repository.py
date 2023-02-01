@@ -1,44 +1,22 @@
 import logging
+from contextlib import closing
 
 import jsonpickle
+
 from src.model.hand import Hand
 from src.repository.db_factory import get_db_connection
 
 
 class HandRepository:
-    database = None
-
     def __init__(self, db_conn=None):
-        self.database = db_conn if db_conn is not None else get_db_connection()
+        self.connection = db_conn if db_conn is not None else get_db_connection()
 
     def save(self, hand: Hand) -> Hand:
         logging.debug("Saving hand with id %s", hand.id)
 
-        query = '''
-        INSERT OR REPLACE INTO player_hand (
-            id,
-            game_id,
-            player_id,
-            cards,
-            turn,
-            played_card,
-            updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?)
-        '''
-
-        self.database.execute(
-            query,
-            (
-                hand.id,
-                hand.game_id,
-                hand.player_id,
-                jsonpickle.encode(hand.cards),
-                hand.turn,
-                jsonpickle.encode(hand.played_card),
-                hand.updated_at
-            )
-        )
-        self.database.commit()
+        with closing(self.connection.cursor()) as cursor:
+            self.raw_insert_or_replace(hand, cursor)
+            self.connection.commit()
 
         return hand
 
@@ -46,7 +24,7 @@ class HandRepository:
         logging.debug("Attempting to fetch hand with id %s", hand_id)
         query = "SELECT * FROM player_hand WHERE id = ?"
 
-        row = self.database.execute(query, (hand_id,)).fetchone()
+        row = self.connection.execute(query, (hand_id,)).fetchone()
         if row is not None:
             return self.__row_to_hand(row)
 
@@ -56,13 +34,13 @@ class HandRepository:
         logging.debug("Attempting to fetch hand with game_id %s", game_id)
         query = "SELECT * FROM player_hand WHERE game_id = ?"
 
-        rows = self.database.execute(query, (game_id,)).fetchall()
+        rows = self.connection.execute(query, (game_id,)).fetchall()
         return [self.__row_to_hand(row) for row in rows]
 
     def delete_by_id(self, hand_id: str) -> None:
         logging.debug("Attempting to delete hand with id %s", hand_id)
         query = "DELETE FROM player_hand WHERE id = ?"
-        self.database.execute(query, (hand_id,))
+        self.connection.execute(query, (hand_id,))
 
     def __row_to_hand(self, row):
         hand = Hand()
@@ -74,3 +52,30 @@ class HandRepository:
         hand.played_card = jsonpickle.decode(row[5])
         hand.updated_at = row[6]
         return hand
+
+    @staticmethod
+    def raw_insert_or_replace(hand: Hand, cursor):
+        query = """
+        INSERT OR REPLACE INTO player_hand (
+            id,
+            game_id,
+            player_id,
+            cards,
+            turn,
+            played_card,
+            updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        """
+
+        cursor.execute(
+            query,
+            (
+                hand.id,
+                hand.game_id,
+                hand.player_id,
+                jsonpickle.encode(hand.cards),
+                hand.turn,
+                jsonpickle.encode(hand.played_card),
+                hand.updated_at,
+            ),
+        )

@@ -6,13 +6,13 @@ from src.model.card import Card
 
 class Hand:
     def __init__(self):
-        self.id: str
-        self.game_id: str
-        self.player_id: str
+        self.id: str = None
+        self.game_id: str = None
+        self.player_id: str = None
         self.cards: List[Card]
         self.turn: int = 0
-        self.played_card: Optional[Card]
-        self.updated_at: datetime
+        self.played_card: Optional[Card] = None
+        self.updated_at: datetime = None
 
     def __eq__(self, other) -> bool:
         return (

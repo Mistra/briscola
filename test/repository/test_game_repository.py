@@ -1,11 +1,10 @@
-
-
 import re
 import sqlite3
 import unittest
 from datetime import datetime
 
 import jsonpickle
+
 from src.model.deck import Deck
 from src.model.game import Game
 from src.repository.game_repository import GameRepository
@@ -13,10 +12,7 @@ from src.repository.game_repository import GameRepository
 
 class TestGameRepository(unittest.TestCase):
     def setUp(self):
-        self.db_conn = sqlite3.connect(
-            ":memory:",
-            detect_types=sqlite3.PARSE_DECLTYPES
-        )
+        self.db_conn = sqlite3.connect(":memory:", detect_types=sqlite3.PARSE_DECLTYPES)
         cursor = self.db_conn.cursor()
 
         create_table_sql = None
@@ -43,7 +39,7 @@ class TestGameRepository(unittest.TestCase):
 
         self.assertEqual(row[0], game.id)
         self.assertEqual(row[1], datetime(2000, 1, 1, 0, 0, 0))
-        self.assertEqual(row[2], jsonpickle.encode(game.deck))
+        self.assertEqual(row[2], jsonpickle.encode(game.cards))
 
     def test_update(self):
         game = self.__dummy_game()
@@ -79,13 +75,12 @@ class TestGameRepository(unittest.TestCase):
         self.assertEqual(result, None)
 
     def __dummy_game(self) -> Game:
-
         game = Game()
         game.id = "123-456"
         game.created_at = datetime(2000, 1, 1, 0, 0, 0)
-        game.deck = Deck()
+        game.cards = Deck()
         return game
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
