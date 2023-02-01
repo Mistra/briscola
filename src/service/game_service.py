@@ -45,7 +45,7 @@ class GameService:
         number_of_players = 2
         game = self.__initialize_game(game_id, deck)
         player_stacks = self.__create_player_stacks(number_of_players, game_id)
-        player_hands = self.__create_hands(number_of_players, game.cards, game_id)
+        player_hands = self.__create_hands(number_of_players, game)
 
         game_state = GameState()
         game_state.game = game
@@ -82,9 +82,7 @@ class GameService:
 
         return stacks
 
-    def __create_hands(
-        self, number_of_players: int, deck: Deck, game_id: str
-    ) -> list[Hand]:
+    def __create_hands(self, number_of_players: int, game: Game) -> list[Hand]:
         hands: list[Hand] = []
         turns = BootstrapUtils.roll_turn_sequence(number_of_players, self.random)
 
@@ -93,9 +91,9 @@ class GameService:
 
             hand.id = str(self.id_generator())
             hand.updated_at = self.datetime.utcnow()
-            hand.game_id = game_id
+            hand.game_id = game.id
             hand.turn = turns[idx]
-            hand.cards = deck.pick(3)
+            hand.cards = game.cards.pick(3)
 
             hands.append(hand)
 

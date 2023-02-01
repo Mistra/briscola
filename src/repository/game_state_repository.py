@@ -24,10 +24,10 @@ class GameStateRepository:
             player_ids = self.__fetch_player_ids(game.id, number_of_players, cursor)
             for idx, hand in enumerate(game_state.player_hands):
                 # FIXME: prolly here it's best to bind hands and stacks to game_player!!!
-                hand[idx].player_id = player_ids[idx]
+                hand.player_id = player_ids[idx]
                 HandRepository.raw_insert_or_replace(hand, cursor)
             for idx, stack in enumerate(game_state.player_stacks):
-                stack[idx].player_id = player_ids[idx]
+                stack.player_id = player_ids[idx]
                 StackRepository.raw_insert_or_replace(stack, cursor)
             self.connection.commit()
 

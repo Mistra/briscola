@@ -86,7 +86,7 @@ class TestGameService(unittest.TestCase):
         hand1.turn = 0
 
         hand2 = Hand()
-        hand2.id = "456"
+        hand2.id = "123"
         hand2.game_id = game_id
         hand2.updated_at = now
         hand2.cards = [
