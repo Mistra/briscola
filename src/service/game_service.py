@@ -13,6 +13,7 @@ from src.repository.game_player_repository import GamePlayerRepository
 from src.repository.game_repository import GameRepository
 from src.repository.game_state_repository import GameStateRepository
 from src.service.bootstrap_utils import BootstrapUtils
+from src.model.game_player import GamePlayer
 
 
 class GameService:
@@ -39,7 +40,14 @@ class GameService:
         self.game_repository.create(game)
 
     def join(self, player_id: uuid, game_id: uuid):
-        pass
+        number_of_players = 2
+
+        game_player = GamePlayer()
+        game_player.id = self.id_generator()
+        game_player.player_id = player_id
+        game_player.game_id = game_id
+
+        self.game_player_repository.create(game_player, number_of_players)
 
     def bootstrap(self, game_id: uuid, deck: Optional[Deck] = None):
         number_of_players = 2

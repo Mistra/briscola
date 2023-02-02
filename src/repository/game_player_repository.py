@@ -3,12 +3,27 @@ from contextlib import closing
 from typing import Optional
 
 from src.model.game_player import GamePlayer
+from src.repository.player_repository import PlayerRepository
+from src.repository.game_repository import GameRepository
 from src.repository.db_factory import get_db_connection
 
 
 class GamePlayerRepository:
     def __init__(self, db_conn=None):
         self.connection = db_conn if db_conn is not None else get_db_connection()
+
+    def create(self, game_player: GamePlayer, number_of_players: int):
+        logging.debug("Creating game_player with id %s", game_player.id)
+
+        with closing(self.connection.cursor()) as cursor:
+            self.__check_player_exists(game_player.player_id, cursor)
+            self.__check_game_exists(game_player.game_id, cursor)
+            self.__check_game_is_joinable(game_player, number_of_players, cursor)
+
+            self.raw__insert_or_replace(game_player, cursor)
+            self.connection.commit()
+
+        return game_player
 
     def save(self, game_player: GamePlayer):
         logging.debug("Saving game_player with id %s", game_player.id)
@@ -76,3 +91,27 @@ class GamePlayerRepository:
         cursor.execute(
             query, (game_player.id, game_player.game_id, game_player.player_id)
         )
+
+    @staticmethod
+    def __check_player_exists(player_id: str, cursor):
+        existing_player = PlayerRepository.raw_find_by_id(player_id, cursor)
+        if existing_player is None:
+            raise Exception(f"Player ${player_id} doesn't exist")
+
+    @staticmethod
+    def __check_game_is_joinable(
+        game_player: GamePlayer, number_of_players: int, cursor
+    ):
+        existing_game_players = GamePlayerRepository.raw__find_by_game_id(
+            game_player.game_id, cursor
+        )
+        if number_of_players <= len(existing_game_players):
+            raise Exception(
+                f"Player ${game_player.player_id} cannot join game ${game_player.game_id}, the game is full"
+            )
+
+    @staticmethod
+    def __check_game_exists(game_id: str, cursor):
+        existing_game = GameRepository.raw_find_by_id(game_id, cursor)
+        if existing_game is None:
+            raise Exception(f"Game ${game_id} doesn't exist")
