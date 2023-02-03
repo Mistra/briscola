@@ -3,8 +3,12 @@ from contextlib import closing
 from typing import Optional
 
 from src.model.game_player import GamePlayer
-from src.repository.player_repository import PlayerRepository
-from src.repository.game_repository import GameRepository
+from src.repository.player_repository import PlayerRepository, UndefinedPlayerException
+from src.repository.game_repository import (
+    GameRepository,
+    FullGameException,
+    UndefinedGameException,
+)
 from src.repository.db_factory import get_db_connection
 
 
@@ -12,7 +16,7 @@ class GamePlayerRepository:
     def __init__(self, db_conn=None):
         self.connection = db_conn if db_conn is not None else get_db_connection()
 
-    def create(self, game_player: GamePlayer, number_of_players: int):
+    def create(self, game_player: GamePlayer, number_of_players: int) -> GamePlayer:
         logging.debug("Creating game_player with id %s", game_player.id)
 
         with closing(self.connection.cursor()) as cursor:
@@ -96,7 +100,7 @@ class GamePlayerRepository:
     def __check_player_exists(player_id: str, cursor):
         existing_player = PlayerRepository.raw_find_by_id(player_id, cursor)
         if existing_player is None:
-            raise Exception(f"Player ${player_id} doesn't exist")
+            raise UndefinedPlayerException(f"Player ${player_id} doesn't exist")
 
     @staticmethod
     def __check_game_is_joinable(
@@ -106,7 +110,7 @@ class GamePlayerRepository:
             game_player.game_id, cursor
         )
         if number_of_players <= len(existing_game_players):
-            raise Exception(
+            raise FullGameException(
                 f"Player ${game_player.player_id} cannot join game ${game_player.game_id}, the game is full"
             )
 
@@ -114,4 +118,4 @@ class GamePlayerRepository:
     def __check_game_exists(game_id: str, cursor):
         existing_game = GameRepository.raw_find_by_id(game_id, cursor)
         if existing_game is None:
-            raise Exception(f"Game ${game_id} doesn't exist")
+            raise UndefinedGameException(f"Game ${game_id} doesn't exist")

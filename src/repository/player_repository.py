@@ -55,3 +55,7 @@ class PlayerRepository:
         player.name = row[1]
         player.created_at = row[2]
         return player
+
+
+class UndefinedPlayerException(Exception):
+    pass

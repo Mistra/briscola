@@ -59,3 +59,11 @@ class GameRepository:
         """
 
         cursor.execute(query, (game.id, game.created_at, jsonpickle.encode(game.cards)))
+
+
+class UndefinedGameException(Exception):
+    pass
+
+
+class FullGameException(Exception):
+    pass
