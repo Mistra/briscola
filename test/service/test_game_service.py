@@ -9,7 +9,10 @@ from src.model.deck import Deck
 from src.model.game import Game
 from src.model.hand import Hand
 from src.model.stack import Stack
+from src.model.game_player import GamePlayer
 from src.repository.game_state_repository import GameStateRepository
+from src.repository.game_player_repository import GamePlayerRepository
+
 
 # from src.repository.player_repository import PlayerRepository
 from src.service.game_service import GameService
@@ -46,6 +49,26 @@ class Matcher:
 class TestGameService(unittest.TestCase):
     def setUp(self):
         pass
+
+    def test_join(self):
+        number_of_players = 2
+        game_player_id = "1"
+        player_id = "2"
+        game_id = "123"
+        mock_game_player_repository = MagicMock(spec=GamePlayerRepository)
+        game_service = GameService(game_player_repository=mock_game_player_repository)
+        game_service.id_generator = MagicMock(return_value=game_player_id)
+
+        game_service.join(player_id, game_id)
+
+        expected_game_player = GamePlayer()
+        expected_game_player.id = game_player_id
+        expected_game_player.game_id = game_id
+        expected_game_player.player_id = player_id
+
+        mock_game_player_repository.create.assert_called_with(
+            expected_game_player, number_of_players
+        )
 
     def test_bootstrap(self):
         # creating mocks
