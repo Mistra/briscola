@@ -3,13 +3,13 @@ from contextlib import closing
 from typing import Optional
 
 from src.model.game_player import GamePlayer
-from src.repository.player_repository import PlayerRepository, UndefinedPlayerException
+from src.repository.db_factory import get_db_connection
 from src.repository.game_repository import (
-    GameRepository,
     FullGameException,
+    GameRepository,
     UndefinedGameException,
 )
-from src.repository.db_factory import get_db_connection
+from src.repository.player_repository import PlayerRepository, UndefinedPlayerException
 
 
 class GamePlayerRepository:
@@ -106,12 +106,15 @@ class GamePlayerRepository:
     def __check_game_is_joinable(
         game_player: GamePlayer, number_of_players: int, cursor
     ):
+        game_id = game_player.game_id
+        player_id = game_player.player_id
+
         existing_game_players = GamePlayerRepository.raw__find_by_game_id(
-            game_player.game_id, cursor
+            game_id, cursor
         )
         if number_of_players <= len(existing_game_players):
             raise FullGameException(
-                f"Player ${game_player.player_id} cannot join game ${game_player.game_id}, the game is full"
+                f"Player ${player_id} cannot join game ${game_id}, the game is full"
             )
 
     @staticmethod
