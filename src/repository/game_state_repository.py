@@ -64,7 +64,7 @@ class GameStateRepository:
 
     def __extract_game_state(self, game_id: str, cursor) -> GameState:
         query = """
-            SELECT g.*, gp.*, h.*, s.* from game g
+            SELECT g.*, h.*, s.* from game g
             JOIN hand h
             ON h.game_id = g.id
             JOIN stack s

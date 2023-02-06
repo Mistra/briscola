@@ -131,22 +131,38 @@ class GameService:
         # FIXME: horrific dto abuse, use player_move
         player_id = new_game_state.player_hands[0].player_id
         played_card = new_game_state.player_hands[0].played_card
-        sorted_hands = sorted(
-            current_game_state.player_hands, key=lambda hand: hand.turn
+        current_hand = next(
+            (
+                hand
+                for hand in current_game_state.player_hands
+                if hand.player_id == player_id
+            ),
+            None,
         )
 
         # check if it's player's turn
-        for hand in sorted_hands:
-            if hand.player_id == player_id:  # it's player's turn
-                break
-            if hand.played_card is None:  # someone before player didn't play
+        if current_hand.turn > 0:  # if turn is 0 there's no need to check
+            previous_hand_played_card = next(
+                (
+                    hand.played_card
+                    for hand in current_game_state.player_hands
+                    if hand.turn == current_hand.turn - 1
+                ),
+                None,
+            )
+            if previous_hand_played_card is None:
                 return False
 
         # check if player owns played card
-        player_hand = next(
-            (hand for hand in sorted_hands if hand.player_id == player_id), None
+        player_cards = next(
+            (
+                hand.cards
+                for hand in current_game_state.player_hands
+                if hand.player_id == player_id
+            ),
+            [],
         )
-        return player_hand is not None and player_hand.played_card == played_card
+        return played_card in player_cards
 
     @staticmethod
     def __update_game_state(
