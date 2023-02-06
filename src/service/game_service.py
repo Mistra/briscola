@@ -1,19 +1,20 @@
 import logging
 import random
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from uuid import uuid4 as uuid
 
 from src.dto.game_state import GameState
+from src.model.card import CardSuit
 from src.model.deck import Deck
 from src.model.game import Game
+from src.model.game_player import GamePlayer
 from src.model.hand import Hand
 from src.model.stack import Stack
 from src.repository.game_player_repository import GamePlayerRepository
 from src.repository.game_repository import GameRepository
 from src.repository.game_state_repository import GameStateRepository
 from src.service.bootstrap_utils import BootstrapUtils
-from src.model.game_player import GamePlayer
 
 
 class GameService:
@@ -61,6 +62,14 @@ class GameService:
         game_state.player_hands = player_hands
 
         self.game_state_repository.save(game_state)
+
+    def play_card(self, player_id, game_id, card):
+        hand = Hand(game_id=game_id, player_id=player_id, played_card=card)
+
+        game_state = GameState()
+        game_state.player_hands = [hand]
+
+        self.game_state_repository.update(game_state)
 
     def fetch_state(self, game_id):
         pass
@@ -114,3 +123,80 @@ class GameService:
         game.cards = Deck.init_shuffled() if deck is None else deck
 
         return game
+
+    @staticmethod
+    def __move_is_valid(
+        current_game_state: GameState, new_game_state: GameState
+    ) -> bool:
+        # FIXME: horrific dto abuse, use player_move
+        player_id = new_game_state.player_hands[0].player_id
+        played_card = new_game_state.player_hands[0].played_card
+        sorted_hands = sorted(
+            current_game_state.player_hands, key=lambda hand: hand.turn
+        )
+
+        # check if it's player's turn
+        for hand in sorted_hands:
+            if hand.player_id == player_id:  # it's player's turn
+                break
+            if hand.played_card is None:  # someone before player didn't play
+                return False
+
+        # check if player owns played card
+        player_hand = next(
+            (hand for hand in sorted_hands if hand.player_id == player_id), None
+        )
+        return player_hand is not None and player_hand.played_card == played_card
+
+    @staticmethod
+    def __update_game_state(
+        current_game_state: GameState, new_game_state: GameState
+    ) -> GameState:
+        # FIXME: horrific dto abuse, use player_move
+        player_id = new_game_state.player_hands[0].player_id
+        played_card = new_game_state.player_hands[0].played_card
+        number_of_players = current_game_state.get_number_of_players()
+        player_hand = current_game_state.get_player_hand(player_id)
+
+        # updating current_game_state
+        player_hand.played_card = played_card
+
+        if player_hand.turn == number_of_players - 1:
+            return GameService.__cycle_hands(current_game_state)
+        return current_game_state
+
+    @staticmethod
+    def __cycle_hands(game_state: GameState) -> GameState:
+        hands = game_state.player_hands
+        # FIXME: problem, when last card is picked up there's no way to tell what's trump
+        winning_hand = GameService.__calculate_winning_hand(
+            hands, game_state.game.cards[-1]
+        )
+        played_cards = list(map(lambda hand: hand.played_card, hands))
+        winning_stack = game_state.get_player_stack(winning_hand.player_id)
+        winning_stack.cards.extend(played_cards)
+
+        for hand in hands:
+            hand.cards.remove(hand.played_card)
+            hand.played_card = None
+
+        # TODO: give winner turn 0 and pick next card from deck
+        return game_state
+
+    @staticmethod
+    def __calculate_winning_hand(hands: List[Hand], trump_suit: CardSuit) -> Hand:
+        """Given a hand of cards, calculate the winning hand"""
+        if len(hands) == 0:
+            raise ValueError("No cards")
+
+        trump_hands = list(filter(lambda hand: hand.played_card == trump_suit, hands))
+        winning_suit = (
+            trump_hands[0].played_card.suit
+            if len(trump_hands) > 0
+            else hands[0].played_card.suit
+        )
+
+        filtered_hands = filter(
+            lambda hand: hand.played_card.suit == winning_suit, hands
+        )
+        return max(filtered_hands, key=lambda hand: hand.played_card.value)

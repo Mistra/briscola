@@ -1,18 +1,28 @@
 from datetime import datetime
 from typing import List, Optional
+from uuid import uuid4
 
 from src.model.card import Card
 
 
 class Hand:
-    def __init__(self):
-        self.id: str = None
-        self.game_id: str = None
-        self.player_id: str = None
-        self.cards: List[Card]
-        self.turn: int = 0
-        self.played_card: Optional[Card] = None
-        self.updated_at: datetime = None
+    def __init__(
+        self,
+        hand_id: uuid4 = None,
+        game_id: uuid4 = None,
+        player_id: uuid4 = None,
+        cards: List[Card] = None,
+        turn: int = 0,
+        played_card: Optional[Card] = None,
+        updated_at: datetime = None,
+    ):
+        self.id: str = hand_id
+        self.game_id: str = game_id
+        self.player_id: str = player_id
+        self.cards: List[Card] = cards
+        self.turn: int = turn
+        self.played_card: Optional[Card] = played_card
+        self.updated_at: datetime = updated_at
 
     def __eq__(self, other) -> bool:
         return (

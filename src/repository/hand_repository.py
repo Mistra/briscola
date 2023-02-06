@@ -42,7 +42,8 @@ class HandRepository:
         query = "DELETE FROM player_hand WHERE id = ?"
         self.connection.execute(query, (hand_id,))
 
-    def __row_to_hand(self, row):
+    @staticmethod
+    def __row_to_hand(row):
         hand = Hand()
         hand.id = row[0]
         hand.game_id = row[1]

@@ -1,6 +1,6 @@
 import logging
-from typing import Optional
 from contextlib import closing
+from typing import Optional
 
 from src.model.player import Player
 from src.repository.db_factory import get_db_connection

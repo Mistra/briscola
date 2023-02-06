@@ -35,7 +35,8 @@ class StackRepository:
         query = "DELETE FROM stack WHERE id = ?"
         self.connection.execute(query, (stack_id,))
 
-    def __row_to_stack(self, row):
+    @staticmethod
+    def __row_to_stack(row):
         stack = Stack()
         stack.id = row[0]
         stack.game_id = row[1]

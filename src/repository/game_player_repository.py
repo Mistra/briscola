@@ -100,7 +100,7 @@ class GamePlayerRepository:
     def __check_player_exists(player_id: str, cursor):
         existing_player = PlayerRepository.raw_find_by_id(player_id, cursor)
         if existing_player is None:
-            raise UndefinedPlayerException(f"Player ${player_id} doesn't exist")
+            raise UndefinedPlayerException(f"Player {player_id} doesn't exist")
 
     @staticmethod
     def __check_game_is_joinable(
@@ -114,11 +114,11 @@ class GamePlayerRepository:
         )
         if number_of_players <= len(existing_game_players):
             raise FullGameException(
-                f"Player ${player_id} cannot join game ${game_id}, the game is full"
+                f"Player {player_id} cannot join game {game_id}, the game is full"
             )
 
     @staticmethod
     def __check_game_exists(game_id: str, cursor):
         existing_game = GameRepository.raw_find_by_id(game_id, cursor)
         if existing_game is None:
-            raise UndefinedGameException(f"Game ${game_id} doesn't exist")
+            raise UndefinedGameException(f"Game {game_id} doesn't exist")
