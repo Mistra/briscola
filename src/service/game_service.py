@@ -183,6 +183,7 @@ class GameService:
 
     @staticmethod
     def __cycle_hands(game_state: GameState) -> GameState:
+        tot_players = game_state.get_number_of_players()
         hands = game_state.player_hands
         # FIXME: problem, when last card is picked up there's no way to tell what's trump
         winning_hand = GameService.__calculate_winning_hand(
@@ -193,10 +194,12 @@ class GameService:
         winning_stack.cards.extend(played_cards)
 
         for hand in hands:
+            hand.turn = (hand.turn + tot_players - winning_hand.turn) % tot_players
             hand.cards.remove(hand.played_card)
             hand.played_card = None
+        for hand in sorted(hands, key=lambda hand: hand.turn):
+            hand.cards.extend(game_state.game.cards.pick())
 
-        # TODO: give winner turn 0 and pick next card from deck
         return game_state
 
     @staticmethod
